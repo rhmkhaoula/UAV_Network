@@ -160,12 +160,15 @@ void UAVSensorApp::socketClosed(UdpSocket *socket) {
 }
 
 void UAVSensorApp::handleStartOperation(LifecycleOperation *operation) {
-    socket.setOutputGate(gate("socketOut"));
-    socket.bind(localPort);
-    // Empty multicast group list - we'll just listen for broadcasts
-    MulticastGroupList mgl;
-    socket.joinLocalMulticastGroups(mgl);
-    socket.setCallback(this);
+    // Vérifier si le socket est déjà ouvert avant de le réinitialiser
+    if (!socket.isOpen()) {
+        socket.setOutputGate(gate("socketOut"));
+        socket.bind(localPort);
+        // Empty multicast group list - we'll just listen for broadcasts
+        MulticastGroupList mgl;
+        socket.joinLocalMulticastGroups(mgl);
+        socket.setCallback(this);
+    }
 
     serverCheckTimer = new cMessage("serverCheckTimer");
     scheduleAt(simTime() + par("startTime"), serverCheckTimer);
