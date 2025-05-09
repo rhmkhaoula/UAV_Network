@@ -43,8 +43,9 @@ void UAVSensorApp::initialize(int stage) {
 
         socket.setOutputGate(gate("socketOut"));
         socket.bind(localPort);
-        // Bind to server status port too for receiving server broadcasts
-        socket.joinLocalMulticastGroups(); // Join multicast groups for broadcast reception
+        // Empty multicast group list - we'll just listen for broadcasts
+        MulticastGroupList mgl;
+        socket.joinLocalMulticastGroups(mgl);
         socket.setCallback(this);
 
         // Start looking for a server
@@ -161,7 +162,9 @@ void UAVSensorApp::socketClosed(UdpSocket *socket) {
 void UAVSensorApp::handleStartOperation(LifecycleOperation *operation) {
     socket.setOutputGate(gate("socketOut"));
     socket.bind(localPort);
-    socket.joinLocalMulticastGroups(); // Join multicast groups for broadcast reception
+    // Empty multicast group list - we'll just listen for broadcasts
+    MulticastGroupList mgl;
+    socket.joinLocalMulticastGroups(mgl);
     socket.setCallback(this);
 
     serverCheckTimer = new cMessage("serverCheckTimer");
